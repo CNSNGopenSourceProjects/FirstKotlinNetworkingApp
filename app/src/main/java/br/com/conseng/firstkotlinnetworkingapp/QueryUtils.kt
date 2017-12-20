@@ -8,7 +8,6 @@ import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
-import kotlin.math.log
 
 object QueryUtils {
 
@@ -17,56 +16,60 @@ object QueryUtils {
     fun fetchArticleData(requestUrl: String): List<Article>? {
         val url = createUrl(requestUrl)
 
-        var jsonResponse:String? = null
+        var jsonResponse: String? = null
         try {
-           jsonResponse = getResponseFromHttpUrl(url)
-        } catch (e:IOException){
+            jsonResponse = getResponseFromHttpUrl(url)
+        } catch (e: IOException) {
             Log.e(logTag, "Problem making the HTTP request", e)
         }
-        return extractFetureFromJson(jsonResponse)
+        return extractFeatureFromJson(jsonResponse)
     }
 
-    private fun createUrl(requestUrl: String): URL? {
+    private fun createUrl(stringUrl: String): URL? {
         var url: URL? = null
-        try {
-            url = URL(requestUrl)
-        } catch (e: MalformedURLException) {
-            Log.e(logTag, "Problem building the URL", e)
+
+        if (!stringUrl.isEmpty()) {
+            try {
+                url = URL(stringUrl)
+            } catch (e: MalformedURLException) {
+                Log.e(logTag, "Problem building the URL", e)
+            }
         }
         return url
     }
 
     @Throws(IOException::class)
     private fun getResponseFromHttpUrl(url: URL?): String? {
-        val urlConnection = url?.openConnection() as HttpURLConnection?
-        try {
-            if (urlConnection?.responseCode == HttpURLConnection.HTTP_OK){
-                val inputStream = urlConnection?.inputStream
-                val scanner = Scanner(inputStream)
-                scanner.useDelimiter("\\A")
-                if (scanner.hasNext()) {
-                    return  scanner.next()
+        if (null != url) {
+            val urlConnection = url.openConnection() as HttpURLConnection?
+            try {
+                if (urlConnection?.responseCode == HttpURLConnection.HTTP_OK) {
+                    val inputStream = urlConnection.inputStream
+                    val scanner = Scanner(inputStream)
+                    scanner.useDelimiter("\\A")
+                    if (scanner.hasNext()) {
+                        return scanner.next()
+                    }
+                } else {
+                    Log.e(logTag, "Error response code: " + urlConnection?.responseCode)
                 }
-            } else {
-                Log.e(logTag, "Error response code: " + urlConnection?.responseCode)
+            } finally {
+                urlConnection?.disconnect()
             }
-        } finally {
-            urlConnection?.disconnect()
         }
-
         return null
     }
 
-    private fun extractFetureFromJson(jsonResponse: String?): List<Article>? {
-        if (jsonResponse.isNullOrEmpty()) {
+    private fun extractFeatureFromJson(articleJson: String?): List<Article>? {
+        if (articleJson.isNullOrEmpty()) {
             return null
         }
         val articles = mutableListOf<Article>()
         try {
-            val baseJsonResponse = JSONObject(jsonResponse)
+            val baseJsonResponse = JSONObject(articleJson)
             val articleArray = baseJsonResponse.getJSONArray("articles")
 
-            for (i in 0..articleArray.length()-1) {
+            for (i in 0..articleArray.length() - 1) {
                 val currentArticle = Article(articleArray.getJSONObject(i))
                 articles.add(currentArticle)
             }

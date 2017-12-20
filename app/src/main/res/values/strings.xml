@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">First Kotlin Networking App</string>
+    <!-- API NEWS access values -->
+    <string name="api_base_url" translatable="false">https://newsapi.org/v2/top-headlines</string>
+    <string name="query_param_source" translatable="false">sources</string>
+    <string name="query_param_apikey" translatable="false">apiKey</string>
+    <string name="news_source" translatable="false">bbc-news</string>
+    <string name="news_source_title">BBC News</string>
+    <!-- API NEWS key -->
+    <string name="news_api_org_key">9dd2a151511143ab8365b9fd12fbd087</string>
 </resources>

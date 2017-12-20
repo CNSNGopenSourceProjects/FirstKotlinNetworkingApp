@@ -2,44 +2,47 @@ package br.com.conseng.firstkotlinnetworkingapp
 
 import org.json.JSONObject
 
-/**
- * Created by Qin on 18/12/2017.
- */
 class Article {
-    lateinit var author: String
-    lateinit var title: String
-    lateinit var description: String
-    lateinit var url: String
-    lateinit var urlToImage: String
-    lateinit var publishedAt: String
+    val author: String
+    val title: String
+    val description: String
+    val url: String
+    val urlToImage: String
+    val publishedAt: String
 
-    private val jsonDataAuthor = "author"
-    private val jsonDataTitle = "title"
-    private val jsonDataDescription = "description"
-    private val jsonDataUrl = "url"
-    private val jsonDataUrlToImage = "urlToImage"
-    private val jsonDataPublishedAt = "publishedAt"
+    private val fieldnameEmptyValue = "null"
 
     constructor(author: String, title: String, description: String,
-    url: String, urlToImage: String, publishedAt: String) {
-        this.author = author
-        this.description = description
-        this.url = url
-        this.urlToImage = urlToImage
-        this.publishedAt = publishedAt
-    }
-    constructor(json: JSONObject) {
-        this.author = getJsonData(json, jsonDataAuthor)
-        this.description = getJsonData(json, jsonDataDescription)
-        this.url = getJsonData(json, jsonDataUrl)
-        this.urlToImage = getJsonData(json, jsonDataUrlToImage)
-        this.publishedAt = getJsonData(json, jsonDataPublishedAt)
+                url: String, urlToImage: String, publishedAt: String) {
+        this.author = getStringWithDefault(author)
+        this.title = getStringWithDefault(title)
+        this.description = getStringWithDefault(description)
+        this.url = getStringWithDefault(url)
+        this.urlToImage = getStringWithDefault(urlToImage)
+        this.publishedAt = getStringWithDefault(publishedAt)
     }
 
-    private fun getJsonData(json: JSONObject, field: String): String {
-        if (json.has(field))
-            return json.getString(field)
-        else
-            return "null"
+    private fun getStringWithDefault(fieldValue: String): String {
+        return if (fieldValue.isEmpty()) fieldnameEmptyValue else fieldValue
+    }
+
+    private val jsonFieldnameAuthor = "author"
+    private val jsonFieldnameTitle = "title"
+    private val jsonFieldnameDescription = "description"
+    private val jsonFieldnameDataUrl = "url"
+    private val jsonFieldnameUrlToImage = "urlToImage"
+    private val jsonFieldnamePublishedAt = "publishedAt"
+
+    constructor(json: JSONObject) {
+        this.author = getJsonData(json, jsonFieldnameAuthor)
+        this.title = getJsonData(json, jsonFieldnameTitle)
+        this.description = getJsonData(json, jsonFieldnameDescription)
+        this.url = getJsonData(json, jsonFieldnameDataUrl)
+        this.urlToImage = getJsonData(json, jsonFieldnameUrlToImage)
+        this.publishedAt = getJsonData(json, jsonFieldnamePublishedAt)
+    }
+
+    private fun getJsonData(json: JSONObject, fieldname: String): String {
+        return if (json.has(fieldname)) json.getString(fieldname) else fieldnameEmptyValue
     }
 }
